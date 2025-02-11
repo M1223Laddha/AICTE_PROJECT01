@@ -6,10 +6,10 @@ from streamlit_option_menu import option_menu
 # Set page configuration
 st.set_page_config(page_title='Disease Prediction System', layout='wide', page_icon='🩺')
 
-# Load trained models
-diabetes_model = pickle.load(open("models/diabetes_model_rf.sav", "rb"))
-heart_model = pickle.load(open("models/heart_model_rf.sav", "rb"))
-parkinsons_model = pickle.load(open("models/parkinsons_model_rf.sav", "rb"))
+# Load trained models using correct paths
+diabetes_model = pickle.load(open("C:\\Users\\Mayur\\OneDrive\\Desktop\\Diseases-Prediction-App\\models\\diabetes_model_rf.sav", "rb"))
+heart_model = pickle.load(open("C:\\Users\\Mayur\\OneDrive\\Desktop\\Diseases-Prediction-App\\models\\heart_model002_rf.sav", "rb"))
+parkinsons_model = pickle.load(open("C:\\Users\\Mayur\\OneDrive\\Desktop\\Diseases-Prediction-App\\models\\parkinsons_model_rf.sav", "rb"))
 
 # Option menu for navigation
 selected = option_menu(
@@ -41,7 +41,7 @@ if selected == 'Diabetes Prediction':
     diab_diagnosis = ''
     if st.button('Diabetes Test Result'):
         user_input = [Pregnancies, Glucose, BloodPressure, SkinThickness, Insulin, BMI, DiabetesPedigreeFunction, Age]
-        user_input = [float(x) for x in user_input]
+        user_input = [float(x) if x.strip() else 0 for x in user_input]  # Convert empty values to 0
         diab_prediction = diabetes_model.predict([user_input])
         diab_diagnosis = '✅ The Person is NOT Diabetic' if diab_prediction[0] == 0 else '⚠️ The Person is Diabetic'
 
@@ -72,10 +72,23 @@ if selected == 'Heart Disease Prediction':
     heart_diagnosis = ''
     if st.button('Heart Disease Test Result'):
         user_input = [age, sex, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca, thal]
-        heart_prediction = heart_model.predict([user_input])
-        heart_diagnosis = '✅ The Person does NOT have Heart Disease' if heart_prediction[0] == 0 else '⚠️ The Person is at Risk of Heart Disease'
+        user_input = np.array([float(x) for x in user_input]).reshape(1, -1)  # Ensure correct shape
+
+        # Get probability prediction
+        heart_probabilities = heart_model.predict_proba(user_input)[0]
+        threshold = 0.4  # Lowered for better sensitivity
+
+        # Debugging prints (Remove in production)
+        print(f"Model Classes: {heart_model.classes_}")
+        print(f"Prediction Probabilities: {heart_probabilities}")
+
+        if heart_probabilities[1] >= threshold:
+            heart_diagnosis = "⚠️ The Person is at Risk of Heart Disease"
+        else:
+            heart_diagnosis = "✅ The Person does NOT have Heart Disease"
 
     st.success(heart_diagnosis)
+
 
 # ---------------------- Parkinson’s Disease Prediction ----------------------
 if selected == 'Parkinson’s Prediction':
@@ -98,10 +111,18 @@ if selected == 'Parkinson’s Prediction':
     parkinsons_diagnosis = ''
     if st.button('Parkinson’s Test Result'):
         user_input = [MDVP_Fo, MDVP_Jitter, MDVP_Shimmer, MDVP_Fhi, MDVP_Jitter_Abs, Shimmer_dB, MDVP_Flo, HNR, RPDE]
-        user_input = [float(x) for x in user_input]
-        user_input_extended = np.append(user_input, [0] * (22 - len(user_input)))  # Fill missing values
-        parkinsons_prediction = parkinsons_model.predict([user_input_extended])
-        parkinsons_diagnosis = '✅ The Person does NOT have Parkinson’s' if parkinsons_prediction[0] == 0 else '⚠️ The Person has Parkinson’s'
+        user_input = [float(x) if x.strip() else 0 for x in user_input]  # Convert empty values to 0
+
+        # Ensure all 22 features are included
+        user_input_extended = np.append(user_input, [0] * (22 - len(user_input)))
+
+        # Get probability prediction
+        probability = parkinsons_model.predict_proba([user_input_extended])[0][1]
+        threshold = 0.75  
+
+        if probability >= threshold:
+            parkinsons_diagnosis = "⚠️ The Person has Parkinson’s"
+        else:
+            parkinsons_diagnosis = "✅ The Person does NOT have Parkinson’s"
 
     st.success(parkinsons_diagnosis)
-
