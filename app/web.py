@@ -7,9 +7,9 @@ from streamlit_option_menu import option_menu
 st.set_page_config(page_title='Disease Prediction System', layout='wide', page_icon='🩺')
 
 # Load trained models
-diabetes_model = pickle.load(open("C:\\Users\\Mayur\\OneDrive\\Desktop\\Disesases_Outbreak(AICTE)\\tranining_models\\diabetes_model_rf.sav", 'rb'))
-heart_model = pickle.load(open("C:\\Users\\Mayur\\OneDrive\\Desktop\\Disesases_Outbreak(AICTE)\\tranining_models\\heart_model_rf.sav", 'rb'))
-parkinsons_model = pickle.load(open("C:\\Users\\Mayur\\OneDrive\\Desktop\\Disesases_Outbreak(AICTE)\\tranining_models\\parkinsons_model_rf.sav", 'rb'))
+diabetes_model = pickle.load(open("models/diabetes_model_rf.sav", "rb"))
+heart_model = pickle.load(open("models/heart_model_rf.sav", "rb"))
+parkinsons_model = pickle.load(open("models/parkinsons_model_rf.sav", "rb"))
 
 # Option menu for navigation
 selected = option_menu(
