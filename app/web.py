@@ -7,9 +7,9 @@ from streamlit_option_menu import option_menu
 st.set_page_config(page_title='Disease Prediction System', layout='wide', page_icon='🩺')
 
 # Load trained models using correct paths
-diabetes_model = pickle.load(open("C:\\Users\\Mayur\\OneDrive\\Desktop\\Diseases-Prediction-App\\models\\diabetes_model_rf.sav", "rb"))
-heart_model = pickle.load(open("C:\\Users\\Mayur\\OneDrive\\Desktop\\Diseases-Prediction-App\\models\\heart_model002_rf.sav", "rb"))
-parkinsons_model = pickle.load(open("C:\\Users\\Mayur\\OneDrive\\Desktop\\Diseases-Prediction-App\\models\\parkinsons_model_rf.sav", "rb"))
+diabetes_model = pickle.load(open("models/diabetes_model_rf.sav", "rb"))
+heart_model = pickle.load(open("models/heart_model002_rf.sav", "rb"))
+parkinsons_model = pickle.load(open("models/parkinsons001_model_rf.sav", "rb"))
 
 # Option menu for navigation
 selected = option_menu(
